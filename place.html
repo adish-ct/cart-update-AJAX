@@ -1,0 +1,96 @@
+{% for item in cart_items %}
+{% comment %} ajax class {% endcomment %}
+            <div class="card p-4 mb-3 product_data">
+              <div class="row">
+                <div class="col-lg-3 col-md-12 mb-2 mb-lg-0">
+                  <!-- Image -->
+                  <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                    <a href="{{ item.product.product.get_url }}">
+                      <img src="{{ item.product.product.product_image.url }}" class="w-100" alt="{{ item.product.product.product_name }}" />
+                    </a>
+                    <a href="#!">
+                      <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                    </a>
+                  </div>
+                  <!-- Image -->
+                </div>
+
+                <div class="col-lg-5 col-md-6 mb-2 mb-lg-0">
+                  <!-- Data -->
+                  <p><strong> {{ item.product.product.product_name }} </strong></p>
+                  <p><strong>Offer: &nbsp <small class="text-primary">10 % Offer</small></strong></p>
+                  <p>Category: {{ item.product.product.category.category_name}},&nbsp Brand: {{ item.product.product.brand.brand_name }} </p>
+                  <p>Size: {{ item.product.product_size.size }} </p>
+
+                  <!-- Quantity -->
+                  {% if item.quantity >= item.product.stock %}
+                    {% if item.product.stock == 0 %}
+                      <label class="form-label text-danger" for="form1">Out of stock. </label>
+                    {% else %}
+                      <label class="form-label text-danger" for="form1"> Only <strong>{{ item.product.stock }}</strong> left! </label>
+                    {% endif %}
+                  {% else %}
+                    <label class="form-label" for="form1" >Qty : <span id="{{item.product.id}}-qtyL">{{ item.quantity }}</span> X Nos </label>
+                  {% endif %}
+                    {% comment %} ajax input fetching class {% endcomment %}
+                  <input type="hidden" class="product_id" value="{{ item.product.id }}" id="">
+                  {% csrf_token %}
+
+                  <div class="d-flex mb-4" style="max-width: 300px">
+                    {% comment %} <form action="{% url 'remove_cart' item.product.id %}" method="POST"> {% endcomment %}
+                      {% if item.quantity <= item.product.stock %}
+                        {% if item.quantity > 0 %}
+                          <button class="text-center bg-transparent border decreaseQuantity">
+                            <i class="fa fa-minus mx-auto"></i>
+                          </button>
+                        {% endif %}
+                      {% else %}
+                        <button class="text-center bg-transparent border decreaseQuantity">
+                          <i class="fa fa-minus mx-auto"></i>
+                        </button>
+                      {% endif %}
+                    {% comment %} </form> {% endcomment %}
+                    
+                    <div class="form-outline">
+                      <input id="{{item.product.id}}-qty" min="0" name="quantity" readonly value="{{ item.quantity }}" type="tel"
+                        class="form-control text-center inputQuantity" />
+                    </div>
+
+                    {% comment %} <form action="{% url 'add_cart_quandity' item.product.id %}" method="POST"> {% endcomment %}
+                      {% comment %} {% csrf_token %} {% endcomment %}
+                      {% if item.quantity >= item.product.stock %}
+                      {% else %}
+                      <button class="text-center bg-transparent increseQuantity border" >
+                        <i class="fa fa-plus mx-auto"></i>
+                      </button>
+                      {% endif %}
+                    {% comment %} </form> {% endcomment %}
+                    
+                  </div>
+                  <!-- Quantity -->
+
+                  <button class="bg-transparent border-0">
+                    <a href="{% url 'delete_cart' item.product.id %}"><i class="fas fa-trash text-danger">&nbsp Remove
+                        item</i></a>
+                  </button>
+                  <button class="bg-transparent border-0">
+                    <a href="#"><i class="fas fa-heart text-primary">&nbsp Wishlist</i></a>
+                  </button>
+                  <!-- Data -->
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0 align-content-middle">
+                  <!-- Price -->
+                  <p class="text-start text-md-center">
+                    {% comment %} <strong> Rs. <span id="{{item.product.id}}-total">{{ item.sub_total }}/</span> </strong> {% endcomment %}
+                    <strong> Rs. <span id="{{item.product.id}}-total">{{ item.sub_total }}</span> </strong>
+                    {% comment %} <strong> Rs. {{ item.sub_total }} </strong> {% endcomment %}
+                    <br>
+                    <small class="text-muted">Rs. {{ item.product.product_price }} /- for each</small>
+                  </p>
+                  <!-- Price -->
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+            <!------------------------ Single item --------------------------------->
